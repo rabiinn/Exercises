@@ -4,6 +4,7 @@ import Display from "./components/Display";
 import Filter from "./components/Filter" ;
 import server from "./services/server";
 import Notification from "./components/Notification";
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
@@ -21,47 +22,50 @@ const App = () => {
   )
 
   const addName = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const newPerson = {
-      name:newName,
-      number:newNumber
-    }
-   const existingPerson = persons.find(person => person.name === newPerson.name)
-   if(existingPerson){
-    if(window.confirm(`${newPerson.name} is already added to phonebook, 
-      replace the old number with a new one?`)){
-        const updatedPerson = {... existingPerson, number: newNumber}
-        server.updateNum(existingPerson.id,updatedPerson)
-        .then( res => {
-          setPersons(persons.map(person => 
-            person.id !== existingPerson.id ? person : res.data
-          ))
+      name: newName,
+      number: newNumber
+    };
 
-        }).catch(() => {
-          setErrorMsg(`Information of ${updatedPerson.name} has already been removed from server`)
-          setTimeout(() =>{
-            setErrorMsg(null);
-          },5000)
-        })
-        setNewName('')
-        setNewNumber('')
+    const existingPerson = persons.find(person => person.name === newPerson.name);
+
+    if (existingPerson) {
+      if (window.confirm(`${newPerson.name} is already added to phonebook, 
+      replace the old number with a new one?`)) {
+        const updatedPerson = { ...existingPerson, number: newNumber };
+        server.updateNum(existingPerson.id, updatedPerson)
+          .then(res => {
+            setPersons(persons.map(person =>
+              person.id !== existingPerson.id ? person : res.data
+            ));
+          })
+          .catch(() => {
+            setErrorMsg(`Information of ${updatedPerson.name} has already been removed from server`);
+            setTimeout(() => {
+              setErrorMsg(null);
+            }, 5000);
+          });
+        setNewName('');
+        setNewNumber('');
       }
-      else{
-        setNewName('')
-        setNewNumber('')
+      
+    else {
+      setNewName('');
+      setNewNumber('');
       }
-    return
-   }
-   server.create(newPerson).then((res) => {
-    setPersons(persons.concat(res.data))
-    setNewName('')
-    setNewNumber('')
-    setMsg(`Added ${newPerson.name}`)
-    setTimeout(() =>{
-      setMsg(null)
-    },5000)
-   })
+    return;
+    }
     
+    server.create(newPerson).then((res) => {
+      setPersons(persons.concat(res.data));
+      setNewName('');
+      setNewNumber('');
+      setMsg(`Added ${newPerson.name}`);
+      setTimeout(() => {
+        setMsg(null);
+      }, 5000);
+    });
   }
 
   const filteredPersons = persons.filter(person => 
