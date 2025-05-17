@@ -65,7 +65,7 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
     const body = req.body;
 
     const person = new Person({
@@ -76,9 +76,9 @@ app.post('/api/persons', (req, res) => {
     person.save().then(result => {
         res.json(result);
         console.log(`${person.name} saved, number: ${person.number}`);
-    }).catch(error => {
-        next(error);
-    })
+    }).catch(error => 
+        next(error)
+    );
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
