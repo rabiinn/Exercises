@@ -1,32 +1,27 @@
 import express from 'express'
 import mongoose from 'mongoose'
-import { config } from 'dotenv'
-import Blog from './models/blog.js'
-
-config()
+import config from './utils/config.js'
+import blogRouter from './controllers/blogs.js'
+import middleware from './utils/middleware.js'
+import logger from './utils/logger.js'
 
 const app = express()
 
-const mongoUrl = process.env.MONGODB_URI
-mongoose.connect(mongoUrl)
-
+logger.info('connecting to', config.Mongourl)
+mongoose.connect(config.Mongourl).then( () => {
+    logger.info('connected to MongoDB')
+})
+.catch ( (error) => {
+    logger.error('error connection to MongoDB', error.message)
+})
 app.use(express.json())
 
-app.get('/api/blogs', (request, response) => {
-  Blog.find({}).then((blogs) => {
-    response.json(blogs)
-  })
-})
+app.use('/api/blogs', blogRouter)
 
-app.post('/api/blogs', (request, response) => {
-  const blog = new Blog(request.body)
+app.use(middleware.unknownEndpoint)
+app.use(middleware.errorHandler)
 
-  blog.save().then((result) => {
-    response.status(201).json(result)
-  })
-})
 
-const PORT = process.env.PORT
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+app.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`)
 })
