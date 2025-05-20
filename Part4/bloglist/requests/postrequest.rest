@@ -1,9 +1,9 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
- 
+
 {
-    "title": "One Sided Love",
+    "title": "Gomez",
     "Author": "John Cena",
-    "url": "www.google.com",
+    "url": "ajfj",
     "likes": 45
 }

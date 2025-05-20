@@ -1,19 +1,11 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import { config } from 'dotenv'
+import Blog from './models/blog.js'
 
 config()
 
 const app = express()
-
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number,
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
 
 const mongoUrl = process.env.MONGODB_URI
 mongoose.connect(mongoUrl)
